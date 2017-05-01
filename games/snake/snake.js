@@ -1,6 +1,9 @@
 	var canvas = document.getElementById("snakeCanvas");
 	var ctx = canvas.getContext("2d");
 
+	// timer to redraw game 
+	var timer;
+	
     var game_started = false;
 	var canvas_width = canvas.width;
 	var canvas_height = canvas.height;
@@ -8,8 +11,6 @@
 	var x_position = Math.round(canvas_width * Math.random()); 
 	var y_Position = Math.round(canvas_height * Math.random()); 
 	var snakeArray;	
-	
-	// Best way to define enum?
 	var direction = 
 	{
 		RIGHT: "Right",
@@ -19,6 +20,7 @@
 	}
 
 	var food = {x: 200, y:0}
+	var score = 0;
 
 	var current_direction = "Right";
 	// initial position
@@ -28,7 +30,9 @@
     function start_game()
     {
     	 document.getElementById("start").style.display = 'none';
-    	 setInterval(start, 60);
+    	 document.getElementById("snakeCanvas").style.display = 'block';
+
+    	 timer = setInterval(start, 60);
     }
 
 	function start() 
@@ -45,6 +49,7 @@
 	    	snake_array.push({});
 	    	food.x = random_num(0,44)* cell_width;
 	    	food.y = random_num(0,44)* cell_width;
+	    	score++;
 	    }
 	    // TODO use switch statement
 		if (current_direction == direction.RIGHT) head_xposition += cell_width;
@@ -63,10 +68,23 @@
 	    	// snake_array[0].x = 0
 	    	// snake_array[0].y = 0;
 	    	// current_direction = direction.RIGHT;
-	    	location.reload();
+	    	clearInterval(timer);
+	    	document.getElementById("start").innerHTML =  "Score: " + score + "<br/><br/>Restart Game<br/><br/>Press Enter";
+	    	document.getElementById("start").style.display = 'block';
+    	    document.getElementById("snakeCanvas").style.display = 'none';
+    	    score = 0;
+    	    game_started = false;
+    	    snake_array = [{x:0, y:0}]; 
+    	    current_direction = direction.RIGHT;
+    	    paint_canvas();
 	    }
 
-	    snake_array.unshift(tail);
+	    else 
+	    {
+	    		snake_array.unshift(tail);
+		}
+
+
 	}
     
     function food_eaten()
@@ -77,6 +95,8 @@
 	function paint_food()
 	{
 		paint_cell(food.x, food.y);
+		var scoreText = "Score:" + score;
+		ctx.fillText(scoreText, 5, canvas_height-5);
 	}
 
 	function paint_canvas()
@@ -136,11 +156,14 @@
 
 	$(document).keydown(function(e){
 
+	  if (game_started)
+	  {
 		var key = e.which;
 		if(key == "37" && current_direction != direction.RIGHT) current_direction = direction.LEFT;
 		else if(key == "38" && current_direction != direction.DOWN) current_direction = direction.UP;
 		else if(key == "39" && current_direction != direction.LEFT)current_direction = direction.RIGHT;
 		else if(key == "40" && current_direction != direction.UP) current_direction = direction.DOWN;
+	  }
 	})
 
 	$(document).keypress(function(e) {
