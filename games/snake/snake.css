@@ -1,0 +1,38 @@
+@import url("http://fonts.googleapis.com/css?family=Press+Start+2P");
+
+body 
+{
+	background-color: #000000;
+	font-family: "Press Start 2P";
+	color: white;
+}
+
+#snake 
+{
+	font-size:75px;
+	float:left;
+}
+
+#author 
+{
+	float:right;
+}
+
+#start
+{
+	font-size:30px;
+	clear:both;
+	padding-top:100px;
+	text-align:center;
+}
+
+#snakeCanvas
+{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    clear:both;
+    padding-top:100px;
+}
+
+
