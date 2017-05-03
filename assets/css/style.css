@@ -70,7 +70,7 @@
 
     /*Remove hardcoded adjustment. How do I make the responsiveness better. Use smooth responsiveness. */
     @media screen and (max-width: 774px) {
-        .main-content {
+        .main-content.overflow{
             padding-top: 152px;
         }
     }
