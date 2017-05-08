@@ -98,8 +98,8 @@
     function create_food()
     {
     	var food = {
-   			x : random_num(0,44)* cell_width,
-   			y : random_num(0,44)* cell_width
+   			x : random_num(0,49)* cell_width,
+   			y : random_num(0,49)* cell_width
    		};
 
    		return food;
@@ -114,7 +114,7 @@
 	{
 		paint_cell(food.x, food.y);
 		var scoreText = "Score:" + score;
-		ctx.fillText(scoreText, 5, canvas_height-5);
+		ctx.fillText(scoreText, canvas_width - 45, canvas_height-5);
 	}
 
 	function paint_canvas()
@@ -135,7 +135,7 @@
 
 	function paint_cell(x, y)
 	{
-		ctx.fillStyle = "blue";
+		ctx.fillStyle = "red";
 		ctx.fillRect(x, y, cell_width, cell_width);
 		ctx.strokeStyle = "white";
 		ctx.stroke();
