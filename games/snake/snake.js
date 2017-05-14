@@ -1,3 +1,5 @@
+	// TODO Create snake clas to for encapsulation of game functionality
+
 	// Global variables
 	var canvas = document.getElementById("snakeCanvas");
 	var ctx = canvas.getContext("2d");
