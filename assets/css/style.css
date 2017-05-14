@@ -51,6 +51,14 @@
 	    display: block;
 	}
 
+	.logo {
+		background-color:#292929;
+		padding:30px;
+		padding-top:106px;
+		font:bold 45px Georgia, serif;
+		text-align:center;
+	}
+
 	.content {
 		background-color:#292929;
 		margin:20px;
@@ -61,14 +69,6 @@
         padding-right:20%;
         padding-left:20%;
         color:black;
-	}
-	
-	.logo {
-		background-color:#292929;
-		padding:30px;
-		padding-top:106px;
-		font:bold 45px Georgia, serif;
-		text-align:center;
 	}
 
     /*Remove hardcoded adjustment. How do I make the responsiveness better. Use smooth responsiveness. */
