@@ -109,7 +109,7 @@
 	.sidenav {
         font:normal 30px/1.6em Arial, Helvetica, sans-serif;
         height: 100%;
-        width: 0;
+        width: 250px;
         position: fixed;
         z-index: 1;
         top: 0;
