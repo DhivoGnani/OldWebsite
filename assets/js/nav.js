@@ -1,42 +1,40 @@
+/* Author: Dhivo Gnani */
 
-// FIXME...
- $(function() {
-  $("li").on("click",function() {
+  $(document).ready(function(){
 
-  	if (this.id == 1)
- 	{
+    $("a").on('click', function(event) {
+
+      if (this.hash !== "") {
+        event.preventDefault();
+
+        var hash = this.hash;
+
         $('html, body').animate({
-			scrollTop: 0
-		}, 2000);
- 	}
- 	if (this.id == 4)
- 	{
-        $('html, body').animate({
-			scrollTop: $("#About").offset().top
-		}, 2000);
- 	}
- 	if (this.id == 3)
- 	{
-        $('html, body').animate({
-			scrollTop: $("#Contact").offset().top
-		}, 2000);
- 	}
+          scrollTop: $(hash).offset().top
+        }, 2000, function(){
+     
+          window.location.hash = hash;
+        });
+      }
+    });
+
   });
 
-  $("a").click(function() {
- 	if (this.id == 9)
- 	{
-        $('html, body').animate({
-			scrollTop: $("#2A").offset().top
-		}, 2000);
- 	}
-});
-});
 
-function openNav() {
-    document.getElementById("mySidenav").style.width = "250px";
-}
+  function openMenu() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "nav") {
+          x.className += " responsive";
+      } else {
+          x.className = "nav";
+      }
+  }
 
-function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
-}
+  function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+  }
+
+  function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+  }
+

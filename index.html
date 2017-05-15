@@ -17,21 +17,21 @@
 
 		<!--Element contains visible page content-->
 		<body>
-			<div id ="header">
+			<div id ="Header">
 				<div id ="myTopnav" class ="nav">
 					<ul id = "parent">
 					<!--FIXME Should not give unnecessary ids...-->
-					  <li id ="1"><a>Home</a></li>
-					   <li id = "4"><a>About</a></li>
+					  <li><a href ="#Header">Home</a></li>
+					   <li><a href = "#About">About</a></li>
 					   <li class ="dropdown"><a>Games</a>
 					       <div class="dropdown-content">
 						      <a href="games/snake/snake.html">Snake</a>
 						   </div>
 					   </li>
 					   <li><a href="blog.html">Blog</a></li>
-					  <li><a id ="2" href ="assets/pdf/resume.pdf">Resume</a></li>
-					  <li id ="3"><a>Contact</a></li>
-					  <li class = "icon">  <a href="javascript:void(0);" style="font-size:30px;" onclick="myFunction()">&#9776;</a></li>
+					  <li><a href ="assets/pdf/resume.pdf">Resume</a></li>
+					  <li><a href ="#Contact">Contact</a></li>
+					  <li class = "icon">  <a href="javascript:void(0);" style="font-size:30px;" onclick="openMenu()">&#9776;</a></li>
 					</ul>
 				</div>
 			</div>
@@ -60,16 +60,6 @@
 					<p>Email: dgnanara@gmail.com</p>
 				</div>
 			</div>
-			<script>
-function myFunction() {
-    var x = document.getElementById("myTopnav");
-    if (x.className === "nav") {
-        x.className += " responsive";
-    } else {
-        x.className = "nav";
-    }
-}
-</script>	
 			<!--Make a sticky footer-->
 			<div class="footer">2016 Dhivo Gnani</div>
 		</body>
