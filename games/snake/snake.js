@@ -1,4 +1,6 @@
 	// TODO Create snake clas to for encapsulation of game functionality
+	(function(){
+
 
 	// Global variables
 	var canvas = document.getElementById("snakeCanvas");
@@ -30,7 +32,7 @@
     {
     	 document.getElementById("start").style.display = 'none';
     	 document.getElementById("snakeCanvas").style.display = 'block';
-    	 this.initialize();
+    	 initialize();
 
     	 timer = setInterval(start, 60);
     }
@@ -210,3 +212,5 @@
     	}
 	  }
 	})
+
+})();
