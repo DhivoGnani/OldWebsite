@@ -11,6 +11,10 @@
 	/*********************Personal Image*********************/	
 	.img-circle {
 	    padding-top:20px;
+	    display:block; 
+	    width:300px; 
+	    height:300px;  
+	    margin: 0 auto;
 	}
 
 	/*********************content*********************/
@@ -29,6 +33,7 @@
 	/*********************Responsive Navigation Bar*********************/
 	.nav .icon {
 		display:none;
+		font-size:30px;
 	}
 
 	@media screen and (max-width: 774px) {
