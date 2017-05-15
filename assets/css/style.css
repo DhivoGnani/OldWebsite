@@ -37,6 +37,10 @@
 	    background-color: #111;
 	}
 
+	.nav .icon {
+		display:none;
+	}
+
 	.dropdown-content {
 	    display: none;
 	    position: absolute;
@@ -71,12 +75,33 @@
         color:white;
 	}
 
-    /*Remove hardcoded adjustment. How do I make the responsiveness better. Use smooth responsiveness. */
-    @media screen and (max-width: 774px) {
-        .logo.overflow{
-            padding-top: 182px;
-        }
-    }
+	@media screen and (max-width: 774px) {
+	  .nav li:not(:first-child) {display: none;}
+	  #parent > li.icon {
+	  	display:block;
+	  	float:right;
+	  }
+	}
+
+	@media screen and (max-width: 774px) {
+	  .nav.responsive {position: relative;}
+	  #parent > li.icon  {
+	    position: absolute;
+	    right: 0;
+	    top: 0;
+	  }
+
+	  .nav.responsive li {
+	    float: none;
+	    display: block;
+	    text-align: left;
+	  }
+	 .nav.responsive li a {
+	    text-align: left;
+	  }
+
+	}
+
 
     /*Remove hardcoded adjustment*/
     @media screen and (max-width: 1110px) {
@@ -85,7 +110,6 @@
             padding-left:10%;
         }
     }
-
 
     /*Remove hardcoded adjustment*/
     @media screen and (max-width: 774px) {
