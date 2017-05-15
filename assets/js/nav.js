@@ -20,9 +20,8 @@
 
   });
 
-
   function openMenu() {
-      var x = document.getElementById("myTopnav");
+      var x = document.getElementById("Nav");
       if (x.className === "nav") {
           x.className += " responsive";
       } else {
@@ -31,10 +30,10 @@
   }
 
   function openNav() {
-      document.getElementById("mySidenav").style.width = "250px";
+      document.getElementById("Sidenav").style.width = "250px";
   }
 
   function closeNav() {
-      document.getElementById("mySidenav").style.width = "0";
+      document.getElementById("Sidenav").style.width = "0";
   }
 

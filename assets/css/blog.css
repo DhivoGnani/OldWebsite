@@ -1,0 +1,26 @@
+    /* Author: Dhivo Gnani 
+     * File: blog.css  
+     */
+
+    /*********************body*********************/
+    body {
+        background-color:#222222;
+        color:white;
+    }
+
+    /*********************Resize content*********************/
+    @media screen and (max-width: 1110px) {
+        .content {
+            padding-right:10%;
+            padding-left:10%;
+        }
+    }
+
+
+    /*********************Resize content font-size*********************/
+    @media screen and (max-width: 774px) {
+        .content {
+            font-size: 25px;
+        }
+    }
+
