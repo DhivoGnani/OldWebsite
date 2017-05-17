@@ -185,7 +185,6 @@
 	    document.getElementById("Score").style.display = 'none';
 	    document.getElementById("Score").innerHTML =  "Score: 0";
 	    ctx.clearRect(0,0, canvas_width, canvas_height);
-
 	    game_started = false;
 	}
 
