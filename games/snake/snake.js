@@ -12,6 +12,7 @@
 	var x_position = Math.round(canvas_width * Math.random()); 
 	var y_Position = Math.round(canvas_height * Math.random()); 
 	var snakeArray;	
+	var game_finished;
 
 	var direction = 
 	{
@@ -41,53 +42,60 @@
 		food = create_food();
 		score = 0;
 		current_direction= direction.RIGHT;
+		game_finished = false;
     }
 
 	function start() 
 	{
-		paint_canvas();
-		paint_snake();
-        paint_food();
-		var head_xposition = snake_array[0].x;
-		var head_yposition = snake_array[0].y;
+		if (game_finished)
+		{
+			end_game();
+		}
+		else {
+			paint_canvas();
+			paint_snake();
+	        paint_food();
+			var head_xposition = snake_array[0].x;
+			var head_yposition = snake_array[0].y;
 
-	    if (food_eaten())
-	    {
-	    	snake_array.push({});
-	    	food = create_food();
-	    	++score;
-	    }
+		    if (food_eaten())
+		    {
+		    	snake_array.push({});
+		    	food = create_food();
+		    	++score;
+		    }
 
-	    switch(current_direction)
-	    {
-	    	case direction.RIGHT:
-	    		head_xposition += cell_width;
-	    		break;
-	    	case direction.LEFT:
-	    		head_xposition -= cell_width;
-	    		break;
-	    	case direction.UP:
-	    		head_yposition -= cell_width;
-	    		break;
-	    	case direction.DOWN:
-	    		head_yposition += cell_width;
-	    		break;
-	    }
+		    switch(current_direction)
+		    {
+		    	case direction.RIGHT:
+		    		head_xposition += cell_width;
+		    		break;
+		    	case direction.LEFT:
+		    		head_xposition -= cell_width;
+		    		break;
+		    	case direction.UP:
+		    		head_yposition -= cell_width;
+		    		break;
+		    	case direction.DOWN:
+		    		head_yposition += cell_width;
+		    		break;
+		    }
 
-		var tail = snake_array.pop();
+			var tail = snake_array.pop();
 
-		tail.x = head_xposition;
-		tail.y = head_yposition;
+			tail.x = head_xposition;
+			tail.y = head_yposition;
 
 
-		if (check_wall_collision(tail.x, tail.y) || check_body_collision(tail.x, tail.y))
-	    {
-	    	end_game();
-	    }
+			if (check_wall_collision(tail.x, tail.y) || check_body_collision(tail.x, tail.y))
+		    {
+		    	game_finished = true;
+		    }
 
-	    else 
-	    {
-	    	snake_array.unshift(tail);
+		    else 
+		    {
+		    	snake_array.unshift(tail);
+			}
 		}
 	}
     
@@ -115,7 +123,7 @@
 
 	function paint_canvas()
 	{
-		ctx.fillStyle = "white";
+		ctx.fillStyle = "black";
 		ctx.fillRect(0, 0, canvas_width, canvas_height);
 		ctx.strokeStyle = "white";
 		ctx.strokeRect(0, 0, canvas_width, canvas_height);
@@ -130,7 +138,7 @@
 
 	function paint_cell(x, y)
 	{
-		ctx.fillStyle = "red";
+		ctx.fillStyle = "white";
 		ctx.fillRect(x, y, cell_width, cell_width);
 		ctx.strokeStyle = "white";
 		ctx.stroke();
