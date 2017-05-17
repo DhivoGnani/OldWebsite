@@ -1,8 +1,7 @@
-	// TODO Create snake clas to for encapsulation of game functionality
+	/* Author: Dhivo Gnani */ 
+
 	(function(){
 
-
-	// Global variables
 	var canvas = document.getElementById("snakeCanvas");
 	var ctx = canvas.getContext("2d");
 	var timer;
@@ -14,7 +13,6 @@
 	var y_Position = Math.round(canvas_height * Math.random()); 
 	var snakeArray;	
 
-	// Direction enum
 	var direction = 
 	{
 		RIGHT: "Right",
@@ -37,7 +35,6 @@
     	 timer = setInterval(start, 60);
     }
 
-    // set necessary variables
     function initialize()
     {
 		snake_array = [{x: 0,y:0}];
@@ -48,7 +45,6 @@
 
 	function start() 
 	{
-		// Repaint canvas to remove previous painted snake 
 		paint_canvas();
 		paint_snake();
         paint_food();
@@ -58,8 +54,6 @@
 	    if (food_eaten())
 	    {
 	    	snake_array.push({});
-
-	    	// create new random food
 	    	food = create_food();
 	    	++score;
 	    }
@@ -95,8 +89,6 @@
 	    {
 	    	snake_array.unshift(tail);
 		}
-
-
 	}
     
     function create_food()
@@ -131,7 +123,6 @@
 
 	/**
 	 * Returns a random integer between min (inclusive) and max (inclusive)
-	 * Using Math.round() will give you a non-uniform distribution!
 	 */
 	function random_num(min, max) {
 	    return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -176,20 +167,13 @@
 		return false;
 	}
 
+	// FIXME: Refactor
 	function end_game()
 	{
     	clearInterval(timer);
-
-    	// change text of start element
     	document.getElementById("start").innerHTML =  "Score: " + score + "<br/><br/>Restart Game<br/><br/>Press Enter";
-
-    	// display start element
     	document.getElementById("start").style.display = 'block';
-
-    	// hide canvas
 	    document.getElementById("snakeCanvas").style.display = 'none';
-
-	    // clear canvas
 	    ctx.clearRect(0,0, canvas_width, canvas_height);
 
 	    game_started = false;
