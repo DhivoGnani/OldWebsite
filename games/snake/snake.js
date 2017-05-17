@@ -31,6 +31,7 @@
     {
     	 document.getElementById("start").style.display = 'none';
     	 document.getElementById("snakeCanvas").style.display = 'block';
+    	 document.getElementById("Score").style.display =  'block';
     	 initialize();
 
     	 timer = setInterval(start, 60);
@@ -63,6 +64,7 @@
 		    	snake_array.push({});
 		    	food = create_food();
 		    	++score;
+		    	document.getElementById("Score").innerHTML =  "Score: " + score;
 		    }
 
 		    switch(current_direction)
@@ -117,8 +119,6 @@
 	function paint_food()
 	{
 		paint_cell(food.x, food.y);
-		var scoreText = "Score:" + score;
-		ctx.fillText(scoreText, canvas_width - 45, canvas_height-5);
 	}
 
 	function paint_canvas()
@@ -182,6 +182,8 @@
     	document.getElementById("start").innerHTML =  "Score: " + score + "<br/><br/>Restart Game<br/><br/>Press Enter";
     	document.getElementById("start").style.display = 'block';
 	    document.getElementById("snakeCanvas").style.display = 'none';
+	    document.getElementById("Score").style.display = 'none';
+	    document.getElementById("Score").innerHTML =  "Score: 0";
 	    ctx.clearRect(0,0, canvas_width, canvas_height);
 
 	    game_started = false;
