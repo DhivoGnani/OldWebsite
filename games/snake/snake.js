@@ -86,7 +86,7 @@
 
 		    	++score;
 		    	document.getElementById("Score").innerHTML =  "Score: " + score;
-		    	if (score == 2 && level != 2)
+		    	if (score == 10 && level != 2)
 		    	{
 		    		level = level + 1;
 		    		end_game();
