@@ -2,6 +2,7 @@
 
 	(function(){
 
+	var level = 1;
 	var canvas = document.getElementById("snakeCanvas");
 	var ctx = canvas.getContext("2d");
 	var timer;
@@ -13,7 +14,10 @@
 	var y_Position = Math.round(canvas_height * Math.random()); 
 	var snakeArray;	
 	var game_finished;
-
+	var eater;
+	var want_eat = true;
+	var previous_eater;
+	var eat_done;
 	var direction = 
 	{
 		RIGHT: "Right",
@@ -29,9 +33,11 @@
     
     function start_game()
     {
+    	 want_eat = false;
     	 document.getElementById("start").style.display = 'none';
     	 document.getElementById("snakeCanvas").style.display = 'block';
     	 document.getElementById("Score").style.display =  'block';
+    	 document.getElementById("level").style.display =  'block';
     	 initialize();
 
     	 timer = setInterval(start, 60);
@@ -39,23 +45,37 @@
 
     function initialize()
     {
+    	eat_done = false;
+    	previous_eater = {x: 0, y :42};
+    	eater = {x: 1, y :42};
 		snake_array = [{x: 0,y:0}];
 		food = create_food();
 		score = 0;
 		current_direction= direction.RIGHT;
 		game_finished = false;
     }
+    
+    function getElement(start, end)
+	{
+		var x = shortest_path(50,50, start, end);
+		return x;
+	}	
 
 	function start() 
 	{
 		if (game_finished)
 		{
+			level = 1;
 			end_game();
 		}
 		else {
 			paint_canvas();
 			paint_snake();
 	        paint_food();
+	        if(level != 1)
+	        {
+	        	paint_eater();
+	        }
 			var head_xposition = snake_array[0].x;
 			var head_yposition = snake_array[0].y;
 
@@ -63,8 +83,16 @@
 		    {
 		    	snake_array.push({});
 		    	food = create_food();
+
 		    	++score;
 		    	document.getElementById("Score").innerHTML =  "Score: " + score;
+		    	if (score == 2 && level != 2)
+		    	{
+		    		level = level + 1;
+		    		end_game();
+		    		document.getElementById("start").innerHTML =  "Level: 2<br/><br/><Score: " + score + "<br/><br/>Press Enter";
+		    		return;
+		    	}
 		    }
 
 		    switch(current_direction)
@@ -89,7 +117,7 @@
 			tail.y = head_yposition;
 
 
-			if (check_wall_collision(tail.x, tail.y) || check_body_collision(tail.x, tail.y))
+			if (check_wall_collision(tail.x, tail.y) || check_body_collision(tail.x, tail.y) || check_eat_collision(tail.x, tail.y))
 		    {
 		    	game_finished = true;
 		    }
@@ -97,6 +125,27 @@
 		    else 
 		    {
 		    	snake_array.unshift(tail);
+
+		    	if (want_eat && level != 1)
+		    	{
+			    	var element = getElement(eater, { x: snake_array[0].x/10, y: snake_array[0].y/10}); 
+			    	previous_eater = eater;
+
+			    	if (element.length < 3)
+			    	{
+			    		eater.x = element[0].x;
+			    		eater.y = element[0].y;
+			    		eat_done = true;
+			    	}
+			    	else {
+			    		eater.x = element[1].x;
+			    		eater.y = element[1].y;
+			    	}
+			    	want_eat = false;
+			    }
+			    else {
+			    	want_eat = true;
+			    }
 			}
 		}
 	}
@@ -119,6 +168,11 @@
 	function paint_food()
 	{
 		paint_cell(food.x, food.y);
+	}
+
+	function paint_eater()
+	{
+		paint_cell(eater.x* cell_width, eater.y* cell_width);
 	}
 
 	function paint_canvas()
@@ -164,6 +218,23 @@
 
    		return false;
     }
+
+    function check_eat_collision(x,y)
+    {
+		if(eater.x*10 == x && eater.y*10 == y)
+		{
+			return true;
+		}
+
+		for (var  i = 0; i < snake_array.length; ++i)
+   		{
+   			if(snake_array[i].x == eater.x*10 && snake_array[i].y == eater.y*10)
+   			{
+   				return true;
+   			}
+   		}
+   		return false;
+    }
     
 	function check_wall_collision(x,y)
 	{
@@ -183,7 +254,9 @@
     	document.getElementById("start").style.display = 'block';
 	    document.getElementById("snakeCanvas").style.display = 'none';
 	    document.getElementById("Score").style.display = 'none';
+	    document.getElementById("level").style.display = 'none';
 	    document.getElementById("Score").innerHTML =  "Score: 0";
+	    document.getElementById("level").innerHTML =  "Level: " + level;
 	    ctx.clearRect(0,0, canvas_width, canvas_height);
 	    game_started = false;
 	}
