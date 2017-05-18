@@ -55,10 +55,10 @@
 		game_finished = false;
     }
     
-    function getElement(start, end)
+    function get_shortest_path(start, end)
 	{
-		var x = shortest_path(50,50, start, end);
-		return x;
+		var grid = new Grid(50,50);
+		return grid.search(start, end);
 	}	
 
 	function start() 
@@ -128,18 +128,18 @@
 
 		    	if (want_eat && level != 1)
 		    	{
-			    	var element = getElement(eater, { x: snake_array[0].x/10, y: snake_array[0].y/10}); 
+			    	var path = get_shortest_path(eater, { x: snake_array[0].x/10, y: snake_array[0].y/10}); 
 			    	previous_eater = eater;
 
-			    	if (element.length < 3)
+			    	if (path.length < 3)
 			    	{
-			    		eater.x = element[0].x;
-			    		eater.y = element[0].y;
+			    		eater.x = path[0].x;
+			    		eater.y = path[0].y;
 			    		eat_done = true;
 			    	}
 			    	else {
-			    		eater.x = element[1].x;
-			    		eater.y = element[1].y;
+			    		eater.x = path[1].x;
+			    		eater.y = path[1].y;
 			    	}
 			    	want_eat = false;
 			    }
