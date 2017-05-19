@@ -1,22 +1,8 @@
 	/* Author: Dhivo Gnani */ 
 
-	(function(){
-
-	var level = 1;
-	var canvas = document.getElementById("snakeCanvas");
-	var ctx = canvas.getContext("2d");
-	var timer;
-    var game_started = false;
-	var canvas_width = canvas.width;
-	var canvas_height = canvas.height;
-	var cell_width = 10;
-	var x_position = Math.round(canvas_width * Math.random()); 
-	var y_Position = Math.round(canvas_height * Math.random()); 
-	var game_finished;
-	var eater;
-	var want_eat = true;
-	var previous_eater;
-	var eat_done;
+(function(){
+	
+	// enum containing possible directions of movement for snake
 	var direction = 
 	{
 		RIGHT: "Right",
@@ -25,14 +11,28 @@
 		DOWN: "Down"
 	}
 
+	var canvas = document.getElementById("snakeCanvas");
+	var ctx = canvas.getContext("2d");
+	var canvasWidth = canvas.width;
+	var canvasHeight = canvas.height;
+	var cellWidth = 10;
+
+	var timer;
+	var snake; 
+	var enemyAI;
+	var gameState = new GameState();
+
+	var gameFinished;
+	var wantEat = true;
+
 	var food;
 	var score;
-	var current_direction;
-	var snake; 
+	var currentDirection;
+
     
-    function start_game()
+    function startGame()
     {
-     	 want_eat = false;
+     	 wantEat = false;
     	 document.getElementById("start").style.display = 'none';
     	 document.getElementById("snakeCanvas").style.display = 'block';
     	 document.getElementById("Score").style.display =  'block';
@@ -44,18 +44,17 @@
 
     function initialize()
     {
-    	eat_done = false;
-    	previous_eater = {x: 0, y :42};
-    	eater = {x: 1, y :42};
+    	gameState.resetScore();
+    	enemyAI = {x: 1, y :42};
     	snake = new Snake();
 		snake.push(0,0);
 		food = create_food();
 		score = 0;
-		current_direction= direction.RIGHT;
-		game_finished = false;
+		currentDirection= direction.RIGHT;
+		gameFinished = false;
     }
     
-    function get_shortest_path(start, end)
+    function getShortestPath(start, end)
 	{
 		var grid = new Grid(50,50);
 		return grid.search(start, end);
@@ -63,18 +62,18 @@
 
 	function start() 
 	{
-		if (game_finished)
+		if (gameFinished)
 		{
-			level = 1;
+			gameState.resetLevel();
 			end_game();
 		}
 		else {
 			paint_canvas();
 			paint_snake();
 	        paint_food();
-	        if(level != 1)
+	        if(gameState.getLevel() != 1)
 	        {
-	        	paint_eater();
+	        	paint_enemyAI();
 	        }
 			var head_xposition = snake.head().x;
 			var head_yposition = snake.head().y;
@@ -83,31 +82,29 @@
 		    {
 		    	snake.push(null, null);
 		    	food = create_food();
-
-		    	++score;
-		    	document.getElementById("Score").innerHTML =  "Score: " + score;
-		    	if (score == 10 && level != 2)
+		    	document.getElementById("Score").innerHTML =  "Score: " + gameState.addPoint();
+		    	if (gameState.getScore() == 10 && gameState.getLevel() != 2)
 		    	{
-		    		level = level + 1;
+		    		gameState.nextLevel();
 		    		end_game();
-		    		document.getElementById("start").innerHTML =  "Level: 2<br/><br/><Score: " + score + "<br/><br/>Press Enter";
+		    		document.getElementById("start").innerHTML =  "Level: 2<br/><br/><Score: " + gameState.getScore()  + "<br/><br/>Press Enter";
 		    		return;
 		    	}
 		    }
 
-		    switch(current_direction)
+		    switch(currentDirection)
 		    {
 		    	case direction.RIGHT:
-		    		head_xposition += cell_width;
+		    		head_xposition += 1;
 		    		break;
 		    	case direction.LEFT:
-		    		head_xposition -= cell_width;
+		    		head_xposition -= 1;
 		    		break;
 		    	case direction.UP:
-		    		head_yposition -= cell_width;
+		    		head_yposition -= 1;
 		    		break;
 		    	case direction.DOWN:
-		    		head_yposition += cell_width;
+		    		head_yposition += 1;
 		    		break;
 		    }
 
@@ -119,32 +116,29 @@
 
 			if (check_wall_collision(tail.x, tail.y) || check_body_collision(tail.x, tail.y) || check_eat_collision(tail.x, tail.y))
 		    {
-		    	game_finished = true;
+		    	gameFinished = true;
 		    }
 
 		    else 
 		    {
 		    	snake.unShift(tail.x , tail.y);
 
-		    	if (want_eat && level != 1)
+		    	if (wantEat && gameState.getLevel() != 1)
 		    	{
-			    	var path = get_shortest_path(eater, { x: snake.head().x/10, y: snake.head().y/10}); 
-			    	previous_eater = eater;
-
+			    	var path = getShortestPath(enemyAI, { x: snake.head().x, y: snake.head().y}); 
 			    	if (path.length < 3)
 			    	{
-			    		eater.x = path[0].x;
-			    		eater.y = path[0].y;
-			    		eat_done = true;
+			    		enemyAI.x = path[0].x;
+			    		enemyAI.y = path[0].y;
 			    	}
 			    	else {
-			    		eater.x = path[1].x;
-			    		eater.y = path[1].y;
+			    		enemyAI.x = path[1].x;
+			    		enemyAI.y = path[1].y;
 			    	}
-			    	want_eat = false;
+			    	wantEat = false;
 			    }
 			    else {
-			    	want_eat = true;
+			    	wantEat = true;
 			    }
 			}
 		}
@@ -153,8 +147,8 @@
     function create_food()
     {
     	var food = {
-   			x : random_num(0,49)* cell_width,
-   			y : random_num(0,49)* cell_width
+   			x : random_num(0,49),
+   			y : random_num(0,49)
    		};
 
    		return food;
@@ -167,20 +161,20 @@
 
 	function paint_food()
 	{
-		paint_cell(food.x, food.y, "blue");
+		paint_cell(food.x*10, food.y*10, "blue");
 	}
 
-	function paint_eater()
+	function paint_enemyAI()
 	{
-		paint_cell(eater.x* cell_width, eater.y* cell_width, "red");
+		paint_cell(enemyAI.x* cellWidth, enemyAI.y* cellWidth, "red");
 	}
 
 	function paint_canvas()
 	{
 		ctx.fillStyle = "black";
-		ctx.fillRect(0, 0, canvas_width, canvas_height);
+		ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 		ctx.strokeStyle = "white";
-		ctx.strokeRect(0, 0, canvas_width, canvas_height);
+		ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
 	}
 
 	/**
@@ -193,7 +187,7 @@
 	function paint_cell(x, y, color)
 	{
 		ctx.fillStyle = color;
-		ctx.fillRect(x, y, cell_width, cell_width);
+		ctx.fillRect(x, y, cellWidth, cellWidth);
 		ctx.strokeStyle = color;
 		ctx.stroke();
 	}
@@ -203,7 +197,7 @@
 		for (var i = 0; i < snake.length(); ++i)
 		{
 			var element = snake.get(i);
-			paint_cell(element.x, element.y, "white");
+			paint_cell(element.x*10, element.y*10, "white");
 		}
 	}
     
@@ -223,7 +217,7 @@
 
     function check_eat_collision(x,y)
     {
-		if(eater.x*10 == x && eater.y*10 == y)
+		if(enemyAI.x == x && enemyAI.y == y)
 		{
 			return true;
 		}
@@ -231,7 +225,7 @@
 		for (var  i = 0; i < snake.length(); ++i)
    		{
    			var element = snake.get(i);
-   			if(element.x == eater.x*10 && element.y == eater.y*10)
+   			if(element.x == enemyAI.x && element.y == enemyAI.y)
    			{
    				return true;
    			}
@@ -241,7 +235,7 @@
     
 	function check_wall_collision(x,y)
 	{
-		if (x >= canvas_width || x < 0 || y < 0 || y >= canvas_height)
+		if (x >= canvasWidth/cellWidth || x < 0 || y < 0 || y >= canvasHeight/cellWidth)
 		{
 			return true;
 		}
@@ -252,32 +246,33 @@
 	// FIXME: Refactor
 	function end_game()
 	{
+		var currentScore = gameState.getScore();
     	clearInterval(timer);
-    	document.getElementById("start").innerHTML =  "Score: " + score + "<br/><br/>Restart Game<br/><br/>Press Enter";
+    	document.getElementById("start").innerHTML =  "Score: " + currentScore + "<br/><br/>Restart Game<br/><br/>Press Enter";
     	document.getElementById("start").style.display = 'block';
 	    document.getElementById("snakeCanvas").style.display = 'none';
 	    document.getElementById("Score").style.display = 'none';
 	    document.getElementById("level").style.display = 'none';
 	    document.getElementById("Score").innerHTML =  "Score: 0";
-	    document.getElementById("level").innerHTML =  "Level: " + level;
-	    ctx.clearRect(0,0, canvas_width, canvas_height);
-	    game_started = false;
+	    document.getElementById("level").innerHTML =  "Level: " + gameState.getLevel();
+	    ctx.clearRect(0,0, canvasWidth, canvasHeight);
+	    gameState.stop();
 	}
 
 	$(document).keydown(function(e) {
 	  var key = e.which;
 
-	  if (game_started) {
-		if(key == "37" && current_direction != direction.RIGHT) current_direction = direction.LEFT;
-		else if(key == "38" && current_direction != direction.DOWN) current_direction = direction.UP;
-		else if(key == "39" && current_direction != direction.LEFT)current_direction = direction.RIGHT;
-		else if(key == "40" && current_direction != direction.UP) current_direction = direction.DOWN;
+	  if (gameState.hasStarted()) {
+		if(key == "37" && currentDirection != direction.RIGHT) currentDirection = direction.LEFT;
+		else if(key == "38" && currentDirection != direction.DOWN) currentDirection = direction.UP;
+		else if(key == "39" && currentDirection != direction.LEFT)currentDirection = direction.RIGHT;
+		else if(key == "40" && currentDirection != direction.UP) currentDirection = direction.DOWN;
 	  }
 	  else {
   	   if(key == "32") {
     	
-    		game_started = true;
-    		start_game();
+    		gameState.start();
+    		startGame();
     	}
 	  }
 	})
