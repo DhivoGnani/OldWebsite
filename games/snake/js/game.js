@@ -1,4 +1,4 @@
-	/* Author: Dhivo Gnani */ 
+/* Author: Dhivo Gnani */ 
 
 (function(){
 	
@@ -24,6 +24,7 @@
 	var level2Req;
 
     
+	/************* Start Game *************/
     function startGame()
     {
     	 hideMenu();
@@ -33,10 +34,10 @@
     	 timer = setInterval(start, 60);
     }
 
+    /************* Start Game *************/
+    // Initialize variables
     function initialize()
     {
-    	gameState.resetScore();
-
     	if (gameState.getLevel() == 2) {
     		enemyAI = new EnemyAI(5, 24, true);
     	} else {
@@ -49,44 +50,27 @@
 		updateEnemyAICoord = false;
 		canvas = new SnakeCanvas(snake,food, enemyAI);
 		currentDirection= direction.RIGHT;
-		level2Req = 10;
+		level2Req = 1;
     }
     
+    /************* Start *************/
 	function start() 
 	{
+		// paint canvas
+		canvas.paint();
+
 		// Check if any wall collisions or EnemyAI collisions occured
-		if (checkWallCollision(snake.head().x, snake.head().y) || checkEnemyCollision(snake.head().x, snake.head().y))
-	    {
+		if (checkWallCollision(snake.head().x, snake.head().y) || checkEnemyCollision(snake.head().x, snake.head().y)) {	
+	    	// Reset level and score
 	    	gameState.reset();
 	    	endGame();
 	    	return;
 	    }
 
-	    // paint canvas
-		canvas.paint();
-
+	    // Get current position and update based off current direction
 		var head_xposition = snake.head().x;
 		var head_yposition = snake.head().y;
-
-	    if (foodEaten())
-	    {
-	    	snake.push(null, null);
-	    	
-	    	food.setX(randomNum(0,49));
-	    	food.setY(randomNum(0,49));
-	    	
-	    	updateUIScore(gameState.addPoint());
-
-	    	if (gameState.getScore() == level2Req && gameState.getLevel() != 2)
-	    	{
-	    		gameState.nextLevel();
-	    		endGame();
-	    		updateMenuText("Level: 2<br/><br/><Score:" + gameState.getScore()  + "<br/><br/>Press Enter");
-	    		return;
-	    	}
-	    }
-
-	    switch(currentDirection)
+		switch(currentDirection)
 	    {
 	    	case direction.RIGHT:
 	    		head_xposition += 1;
@@ -102,84 +86,88 @@
 	    		break;
 	    }
 
-		var tail = snake.pop();
+	    // Check if snake ate food
+	    if (checkFoodCollision(snake.head().x, snake.head().y)) {	
+	    	updateUIScore(gameState.addPoint());
+	    	if (gameState.getScore() == level2Req && gameState.getLevel() == 1) {
+	    		gameState.nextLevel();
+	    		endGame();
+	    		updateMenuText("Level: 2<br/><br/><Score:" + gameState.getScore()  + "<br/><br/>Press Enter");
+	    		return;
+	    	} else {
+	    		// push empty element to snake
+	    		snake.push(null, null);
+	    		food.setX(randomNum(0,49));
+	    		food.setY(randomNum(0,49));
+	    	}
+	    }
 
+	    // Get tail of snake and set it to next head position
+		var tail = snake.pop();
 		tail.x = head_xposition;
 		tail.y = head_yposition;
 
-
-		if (snake.contains(tail.x, tail.y))
-	    {
-	    	gameState.resetLevel();
+		// End game if head will collide with body
+		if (snake.contains(tail.x, tail.y)) {
+	    	gameState.reset();
 	    	endGame();
 	    	return;
-	    }
-
-	    else 
-	    {
+	    } else {
 	    	snake.unShift(tail.x , tail.y);
-
-	    	if (updateEnemyAICoord && enemyAI.enabled && (snake.head().x < 50) && (snake.head().y <50))
-	    	{
+	    	if (updateEnemyAICoord && enemyAI.enabled && (snake.head().x < 50) && (snake.head().y <50)) {
 		    	var path = getShortestPath({x:enemyAI.x, y:enemyAI.y}, { x: snake.head().x, y: snake.head().y}); 
-		    	if (path.length < 3)
-		    	{
+		    	if (path.length < 3) {
 		    		enemyAI.x = path[0].x;
 		    		enemyAI.y = path[0].y;
-		    	}
-		    	else {
+		    	} else {
 		    		enemyAI.x = path[1].x;
 		    		enemyAI.y = path[1].y;
 		    	}
 		    	updateEnemyAICoord = false;
-		    }
-		    else {
+		    } else {
 		    	updateEnemyAICoord = true;
 		    }
 		}
-		
 	}
-    
-    function foodEaten()
+	
+    /************ Collision checkers *************/
+    // TODO Create collision handler
+    function checkFoodCollision(x, y)
     {
-    	return (snake.head().x == food.x  && snake.head().y == food.y);
+    	return x == food.x  && y == food.y;
     }
 
     function checkEnemyCollision(x,y)
     {
-		if(enemyAI.x == x && enemyAI.y == y)
-		{
-			return true;
-		}
-
+		if(enemyAI.x == x && enemyAI.y == y) return true;	
 		return snake.contains(enemyAI.x, enemyAI.y);
     }
     
 	function checkWallCollision(x,y)
 	{
-		if (x >= canvas.canvasWidth/canvas.cellWidth || x < 0 || y < 0 || y >= canvas.canvasHeight/canvas.cellWidth)
-		{
-			return true;
-		}
-
-		return false;
+		return x >= canvas.canvasWidth/canvas.cellWidth || x < 0 || y < 0 || y >= canvas.canvasHeight/canvas.cellWidth;
 	}
 
 
 	/************* End game*************/
 	function endGame()
 	{
+		// Clear timer
     	clearInterval(timer);
-
+    	// Update menu text with current score
     	var currentScore = gameState.getScore();
     	updateMenuText("Score:" + currentScore + "<br/><br/>Restart Game<br/><br/>Press Enter");
+    	// Show menu
     	showMenu();
+    	// Hide game
 	    hideGame();
-	   
-	    updateUIScore(0);
+	    // Update game UI level
 	    updateUILevel(gameState.getLevel());
-
+	    // Update game UI score
+	    updateUIScore(gameState.getScore());
+	    // clear canvas
 	    canvas.clear();
+	    // stop game
 	    gameState.stop();
 	}
 
@@ -241,8 +229,7 @@
 		else if(key == "38" && currentDirection != direction.DOWN) currentDirection = direction.UP;
 		else if(key == "39" && currentDirection != direction.LEFT)currentDirection = direction.RIGHT;
 		else if(key == "40" && currentDirection != direction.UP) currentDirection = direction.DOWN;
-	  }
-	  else {
+	  } else {
   	   if(key == "32") {
     	
     		gameState.start();
