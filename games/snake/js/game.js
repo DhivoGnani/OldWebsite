@@ -62,7 +62,7 @@
 		// Check if any wall collisions or EnemyAI collisions occured
 		if (checkWallCollision(snake.head().x, snake.head().y) || checkEnemyCollision(snake.head().x, snake.head().y)) {	
 	    	// Reset level and score
-	    	gameState.reset();
+	    	gameState.resetLevel();
 	    	endGame();
 	    	return;
 	    }
@@ -109,7 +109,7 @@
 
 		// End game if head will collide with body
 		if (snake.contains(tail.x, tail.y)) {
-	    	gameState.reset();
+	    	gameState.resetLevel();
 	    	endGame();
 	    	return;
 	    } else {
@@ -161,6 +161,7 @@
     	showMenu();
     	// Hide game
 	    hideGame();
+	    gameState.resetScore();
 	    // Update game UI level
 	    updateUILevel(gameState.getLevel());
 	    // Update game UI score
