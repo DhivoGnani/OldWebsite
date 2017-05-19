@@ -1,5 +1,7 @@
 /********** Author: Dhivo Gnani **********/ 
 
+
+/********** Snake  **********/ 
 // Constructor
 function Snake()
 {
@@ -64,4 +66,36 @@ Snake.prototype.contains = function(xCoord, yCoord)
 		}
 	}
 	return false;
+}
+
+
+/********** Food **********/ 
+function Food(xCoord, yCoord)
+{
+	this.x = xCoord;
+	this.y = yCoord;
+}
+
+
+Food.prototype.setX = function(xCoord)
+{
+	this.x = xCoord;
+}
+
+Food.prototype.setY = function(yCoord)
+{
+	this.y = yCoord;
+}
+
+Food.prototype.get = function()
+{
+	return {x: this.x, y: this.y};
+}
+
+/********** EnemyAI **********/ 
+function EnemyAI(xCoord, yCoord, enableAI)
+{
+	this.x = xCoord;
+	this.y = yCoord;
+	this.enabled = enableAI;
 }

@@ -37,6 +37,12 @@ GameState.prototype.resetScore = function()
 	return this.score;
 }
 
+GameState.prototype.reset = function()
+{
+	this.score = 0;
+	this.level = 1;
+}
+
 GameState.prototype.resetLevel = function()
 {
 	this.level = 1;

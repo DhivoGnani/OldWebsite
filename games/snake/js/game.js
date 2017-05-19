@@ -11,29 +11,25 @@
 		DOWN: "Down"
 	}
 
+	var food;
 	var timer;
 	var snake; 
 	var enemyAI;
 	var gameState = new GameState();
-
-	
-	var wantEat = true;
-
-	var food;
-	var score;
-	var currentDirection;
 	var canvas;
+	
+	var updateEnemyAICoord;
+	var currentDirection;
+	// number of food needed to eat before going to level 2
+	var level2Req;
 
     
     function startGame()
     {
-     	 wantEat = false;
-    	 document.getElementById("start").style.display = 'none';
-    	 document.getElementById("snakeCanvas").style.display = 'block';
-    	 document.getElementById("Score").style.display =  'block';
-    	 document.getElementById("level").style.display =  'block';
-    	 initialize();
+    	 hideMenu();
+    	 showGame();
 
+    	 initialize();
     	 timer = setInterval(start, 60);
     }
 
@@ -44,33 +40,29 @@
     	if (gameState.getLevel() == 2) {
     		enemyAI = new EnemyAI(5, 24, true);
     	} else {
-    		enemyAI = new EnemyAI(5, 5, false);
+    		enemyAI = new EnemyAI(null, null, false);
     	}
-
 
     	snake = new Snake();
 		snake.push(0,0);
 		food = new Food(randomNum(0,49),randomNum(0,49));
-
+		updateEnemyAICoord = false;
 		canvas = new SnakeCanvas(snake,food, enemyAI);
 		currentDirection= direction.RIGHT;
+		level2Req = 10;
     }
     
-    function getShortestPath(start, end)
-	{
-		var grid = new Grid(50,50);
-		return grid.search(start, end);
-	}	
-
 	function start() 
 	{
+		// Check if any wall collisions or EnemyAI collisions occured
 		if (checkWallCollision(snake.head().x, snake.head().y) || checkEnemyCollision(snake.head().x, snake.head().y))
 	    {
-	    	gameState.resetLevel();
+	    	gameState.reset();
 	    	endGame();
 	    	return;
 	    }
 
+	    // paint canvas
 		canvas.paint();
 
 		var head_xposition = snake.head().x;
@@ -83,12 +75,13 @@
 	    	food.setX(randomNum(0,49));
 	    	food.setY(randomNum(0,49));
 	    	
-	    	document.getElementById("Score").innerHTML =  "Score: " + gameState.addPoint();
-	    	if (gameState.getScore() == 10 && gameState.getLevel() != 2)
+	    	updateUIScore(gameState.addPoint());
+
+	    	if (gameState.getScore() == level2Req && gameState.getLevel() != 2)
 	    	{
 	    		gameState.nextLevel();
 	    		endGame();
-	    		document.getElementById("start").innerHTML =  "Level: 2<br/><br/><Score: " + gameState.getScore()  + "<br/><br/>Press Enter";
+	    		updateMenuText("Level: 2<br/><br/><Score:" + gameState.getScore()  + "<br/><br/>Press Enter");
 	    		return;
 	    	}
 	    }
@@ -126,7 +119,7 @@
 	    {
 	    	snake.unShift(tail.x , tail.y);
 
-	    	if (wantEat && gameState.getLevel() != 1)
+	    	if (updateEnemyAICoord && enemyAI.enabled && (snake.head().x < 50) && (snake.head().y <50))
 	    	{
 		    	var path = getShortestPath({x:enemyAI.x, y:enemyAI.y}, { x: snake.head().x, y: snake.head().y}); 
 		    	if (path.length < 3)
@@ -138,10 +131,10 @@
 		    		enemyAI.x = path[1].x;
 		    		enemyAI.y = path[1].y;
 		    	}
-		    	wantEat = false;
+		    	updateEnemyAICoord = false;
 		    }
 		    else {
-		    	wantEat = true;
+		    	updateEnemyAICoord = true;
 		    }
 		}
 		
@@ -149,15 +142,8 @@
     
     function foodEaten()
     {
-    	return (snake.head().x == food.x  && snake.head().y == food.y)
+    	return (snake.head().x == food.x  && snake.head().y == food.y);
     }
-
-	/**
-	 * Returns a random integer between min (inclusive) and max (inclusive)
-	 */
-	function randomNum(min, max) {
-	    return Math.floor(Math.random() * (max - min + 1)) + min;
-	}
 
     function checkEnemyCollision(x,y)
     {
@@ -179,22 +165,74 @@
 		return false;
 	}
 
-	// FIXME: Refactor
+
+	/************* End game*************/
 	function endGame()
 	{
-		var currentScore = gameState.getScore();
     	clearInterval(timer);
-    	document.getElementById("start").innerHTML =  "Score: " + currentScore + "<br/><br/>Restart Game<br/><br/>Press Enter";
-    	document.getElementById("start").style.display = 'block';
-	    document.getElementById("snakeCanvas").style.display = 'none';
-	    document.getElementById("Score").style.display = 'none';
-	    document.getElementById("level").style.display = 'none';
-	    document.getElementById("Score").innerHTML =  "Score: 0";
-	    document.getElementById("level").innerHTML =  "Level: " + gameState.getLevel();
+
+    	var currentScore = gameState.getScore();
+    	updateMenuText("Score:" + currentScore + "<br/><br/>Restart Game<br/><br/>Press Enter");
+    	showMenu();
+	    hideGame();
+	   
+	    updateUIScore(0);
+	    updateUILevel(gameState.getLevel());
+
 	    canvas.clear();
 	    gameState.stop();
 	}
 
+	/************* Functions that manipulate DOM *************/
+	function hideMenu()
+	{
+		document.getElementById("menu").style.display = 'none';
+	}
+
+	function showMenu()
+	{
+		document.getElementById("menu").style.display = 'block';
+	}
+
+	function hideGame()
+	{
+		 document.getElementById("game").style.display = 'none';
+	}
+
+	function showGame()
+	{
+		document.getElementById("game").style.display = 'block';
+	}
+
+	function updateUIScore(score)
+	{
+		document.getElementById("score").innerHTML =  "Score:" + score;
+	}
+
+	function updateUILevel(level)
+	{
+		document.getElementById("level").innerHTML =  "Level:" + level;
+	}
+
+	function updateMenuText(text)
+	{
+		document.getElementById("start").innerHTML =  text;
+	}
+
+	/************* Helper Functions *************/
+	
+	// Returns a random integer between min (inclusive) and max (inclusive)
+	function randomNum(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	function getShortestPath(start, end)
+	{
+		var grid = new Grid(50,50);
+		return grid.search(start, end);
+	}	
+
+	/************* User Event Handlers *************/
 	$(document).keydown(function(e) {
 	  var key = e.which;
 

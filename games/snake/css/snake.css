@@ -9,13 +9,13 @@ body
 	color: white;
 }
 
-#snake 
+.title
 {
 	font-size:75px;
 	float:left;
 }
 
-#author 
+.author 
 {
 	float:right;
 }
@@ -28,26 +28,28 @@ body
 	text-align:center;
 }
 
+#game 
+{
+	display:none;
+	clear:both;
+	padding-top:50px;
+}
+
 #snakeCanvas
 {
+    display:block;
+    padding-top:10px;
     margin-left: auto;
     margin-right: auto;
-    display: none;
-    clear:both;
-    padding-top:10px;
 }
 
 #level 
 {
-	 clear:both;
-	padding-top:90px;
-	display:none;
 	text-align:center;
 }
 
-#Score 
+#score 
 {
 	padding-top:10px;
-	display:none;
 	text-align:center;
 }
