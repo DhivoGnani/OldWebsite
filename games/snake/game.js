@@ -153,7 +153,6 @@
 
    		return food;
     }
-
     function food_eaten()
     {
     	return (snake.head().x == food.x  && snake.head().y == food.y)
