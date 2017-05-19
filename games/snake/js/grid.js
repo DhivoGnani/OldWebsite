@@ -37,7 +37,7 @@ Grid.prototype.search = function(start, end)
 			return path;
 		}
 
-		var x = this.get_adjacent_elements(last_node);
+		var x = this.getAdjacentElements(last_node);
 		for (var i = 0; i < x.length; ++i)
 		{
 			var xcoord = x[i].x;
@@ -57,7 +57,7 @@ Grid.prototype.search = function(start, end)
 }
 
 // Get TOP, BOTTOM, LEFT, RIGHT adjacent elements
-Grid.prototype.get_adjacent_elements = function(last_node)
+Grid.prototype.getAdjacentElements = function(last_node)
 {
 	var xcoord= last_node.x;
 	var ycoord = last_node.y;
