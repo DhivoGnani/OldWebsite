@@ -50,7 +50,7 @@
 		updateEnemyAICoord = false;
 		canvas = new SnakeCanvas(snake,food, enemyAI);
 		currentDirection= direction.RIGHT;
-		level2Req = 1;
+		level2Req = 10;
     }
     
     /************* Start *************/
